@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Dashboard</title>
+    <style>
+        /* Base styles */
+        body {
+            font-family: sans-serif;
+            /* Lighter, simpler background gradient */
+            background: linear-gradient(to bottom right, #f8faff, #eef2f8);
+            min-height: 100vh;
+            padding: 0.5rem; /* Reduced padding for compactness */
+            margin: 0; /* Ensure no default margin */
+            color: #2c2c2c; /* Darker grey text for lighter background */
+            /* Removed overflow-x: hidden from body for potential performance gain and to unmask layout issues if any */
+        }
+
+        @media (min-width: 640px) { /* sm:p-6 */
+            body {
+                padding: 1rem; /* Reduced padding for compactness */
+            }
+        }
+
+        @media (min-width: 1024px) { /* lg:p-8 */
+            body {
+                padding: 1.5rem; /* Reduced padding for compactness */
+            }
+        }
+
+        /* Fade-in animation for main content */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); } /* Slightly reduced translateY */
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .main-content-fade-in {
+            animation: fadeIn 0.7s ease-out forwards; /* Slightly faster animation */
+            animation-delay: 0.1s; /* Reduced delay */
+            opacity: 0; /* Start hidden */
+        }
+
+        /* Card container grid */
+        .card-grid-container {
+            display: grid;
+            grid-template-columns: 1fr; /* Changed to 1 column as there will be only one card */
+            gap: 0.75rem; /* Reduced gap for compactness */
+            margin-bottom: 1rem; /* Reduced margin for compactness */
+            max-width: 72rem; /* max-w-6xl */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (min-width: 768px) { /* md:grid-cols-2 */
+            .card-grid-container {
+                grid-template-columns: 1fr; /* Ensure it stays 1 column on medium screens too */
+            }
+        }
+
+        /* Individual Card styles (for Router Uptime and Network Summary) */
+        .card {
+            background-color: rgba(255, 255, 255, 0.8); /* More opaque for lightness, still transparent */
+            backdrop-filter: blur(5px); /* Further reduced blur for less performance impact */
+            -webkit-backdrop-filter: blur(5px); /* For Safari compatibility */
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05); /* Lighter, simpler shadow */
+            padding: 1rem; /* Reduced padding for compactness */
+            border: 1px solid rgba(255, 255, 255, 0.7); /* Lighter, subtle border */
+            transition: box-shadow 0.15s ease-in-out, transform 0.1s ease-in-out; /* Faster transitions */
+        }
+
+        .card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Subtle hover shadow */
+            transform: translateY(-1px); /* Slight lift effect */
+        }
+
+        .card-blue-border {
+            border-color: rgba(100, 149, 237, 0.4); /* Adjusted border color */
+        }
+
+        .card-indigo-border {
+            border-color: rgba(138, 43, 226, 0.4); /* Adjusted border color */
+        }
+
+        .card-green-border {
+            border-color: rgba(50, 205, 50, 0.4); /* Adjusted border color */
+        }
+
+        .card-title {
+            font-size: 1.15rem; /* Slightly reduced title font size */
+            font-weight: 600;
+            margin-bottom: 0.6rem; /* Reduced margin */
+            display: flex;
+            align-items: center;
+            color: #1a1a1a; /* Even darker title text */
+        }
+
+        .card-title svg {
+            width: 1.15rem; /* Adjusted icon size */
+            height: 1.15rem; /* Adjusted icon size */
+            margin-right: 0.4rem; /* Reduced margin */
+        }
+
+        .card-title-blue svg {
+            color: #1a73e8; /* Stronger blue */
+        }
+
+        .card-title-indigo svg {
+            color: #673ab7; /* Stronger indigo */
+        }
+
+        .card-content-space-y > p {
+            margin-bottom: 0.4rem; /* Reduced space between paragraphs */
+        }
+        .card-content-space-y > p:last-child {
+            margin-bottom: 0;
+        }
+
+        .flex-between-center {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .text-lg {
+            font-size: 0.95rem; /* Slightly reduced font size */
+        }
+
+        .text-md {
+            font-size: 0.8rem; /* Slightly reduced font size */
+        }
+
+        .font-medium {
+            font-weight: 500;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .text-gray-700 {
+            color: #333333; /* Darker grey for general text */
+        }
+
+        .text-blue-600 {
+            color: #1a73e8; /* Stronger blue for uptime values */
+        }
+
+        .text-indigo-600 {
+            color: #673ab7; /* Stronger indigo for summary values */
+        }
+
+        .text-gray-600 {
+            color: #444444; /* Slightly darker grey */
+        }
+
+        .ml-4 {
+            margin-left: 1rem;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        /* Clients section */
+        .clients-section {
+            max-width: 72rem;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 3rem;
+            padding-top: 1rem;
+        }
+
+        /* SSID group container for spacing */
+        .ssid-group-container {
+            margin-bottom: 1.5rem;
+        }
+        .ssid-group-container:last-of-type {
+            margin-bottom: 0;
+        }
+
+        /* SSID group header button */
+        .ssid-header-button {
+            width: 100%;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1a1a1a; /* Dark text for button */
+            margin-bottom: 0.75rem;
+            padding: 0.6rem;
+            background-color: rgba(255, 255, 255, 0.8); /* More opaque, lighter */
+            backdrop-filter: blur(4px); /* Further reduced blur */
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); /* Lighter shadow */
+            transition: background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Faster transitions */
+            outline: none;
+            border: 1px solid rgba(255, 255, 255, 0.7); /* Lighter, subtle border */
+            cursor: pointer;
+        }
+
+        .ssid-header-button:hover {
+            background-color: rgba(255, 255, 255, 0.95); /* More opaque on hover */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+        }
+
+        .ssid-header-button:focus {
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.5); /* Focus ring color matches new blue */
+        }
+
+        .ssid-header-button span:first-child {
+            color: #2e8b57; /* Darker, more vibrant green */
+        }
+
+        .ssid-header-button svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            transform: rotate(-90deg);
+            transition: transform 0.2s ease-in-out;
+            color: #333333;
+        }
+
+        .ssid-header-button.expanded svg {
+            transform: rotate(0deg);
+        }
+
+        /* Collapse/Expand content */
+        .collapse-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; /* Slightly faster transition */
+        }
+
+        .collapse-content.expanded {
+            max-height: 1000px; /* A value large enough to contain content */
+            opacity: 1;
+        }
+
+        /* Client cards grid */
+        .client-cards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 0.75rem;
+        }
+
+        @media (min-width: 640px) { /* sm:grid-cols-2 */
+            .client-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) { /* lg:grid-cols-3 */
+            .client-cards-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Individual client card */
+        .client-card {
+            background-color: rgba(255, 255, 255, 0.7); /* More opaque white */
+            backdrop-filter: blur(4px); /* Further reduced blur */
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06); /* Lighter shadow */
+            padding: 1.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.6); /* Lighter, subtle border */
+            transition: box-shadow 0.15s ease-in-out, transform 0.1s ease-in-out; /* Faster transitions */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .client-card:hover {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Enhanced shadow on hover */
+            transform: translateY(-1px); /* Slight lift effect */
+        }
+
+        .client-card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            color: #1a1a1a; /* Darker hostname text */
+        }
+
+        .client-card-title svg {
+            width: 1.1rem;
+            height: 1.1rem;
+            margin-right: 0.4rem;
+            color: #2e8b57; /* Darker, more vibrant green for client icon */
+        }
+
+        .client-card-footer {
+            margin-top: 0.8rem;
+            padding-top: 0.6rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.5); /* Lighter border */
+            font-size: 0.85rem;
+            color: #444444; /* Darker grey for uptime label */
+        }
+        
+        .client-data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #333333; /* Darker grey for data labels */
+            margin-bottom: 0.45rem;
+        }
+        .client-data-row:last-of-type {
+            margin-bottom: 0;
+        }
+        .client-data-row .label {
+            font-weight: 500;
+        }
+        .client-data-row .value {
+            color: #2e8b57; /* Darker, more vibrant green for data values */
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-section">
+        <!-- Removed: <h1 class="header-title">Network Dashboard</h1> -->
+        <!-- Removed: <p class="header-subtitle">Real-time overview of your network status</p> -->
+    </header>
+
+    <div class="main-content-fade-in">
+        <!-- Content will be dynamically injected here after fetching data -->
+        <p style="text-align: center; margin-top: 2rem; font-size: 1.2rem; color: #555;">Loading network data...</p>
+    </div>
+
+    <script>
+        // Helper function to format uptime from seconds to "Xd Yh Zm"
+        function formatUptime(totalSeconds) {
+            if (totalSeconds < 60) return `${totalSeconds}s`;
+            const minutes = Math.floor(totalSeconds / 60);
+            const remainingSeconds = totalSeconds % 60;
+            if (minutes < 60) return `${minutes}m ${remainingSeconds}s`;
+            const hours = Math.floor(minutes / 60);
+            const remainingMinutes = minutes % 60;
+            if (hours < 24) return `${hours}h ${remainingMinutes}m`;
+            const days = Math.floor(hours / 24);
+            const remainingHours = hours % 24;
+            return `${days}d ${remainingHours}h ${remainingMinutes}m`;
+        }
+
+        // Helper function to format bytes to human-readable size
+        function formatBytes(bytes) {
+            if (bytes === 0) return "0 Bytes";
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        // Global variable to store transformed API data
+        let apiData = {};
+
+        // State to manage the collapsed/expanded status of each SSID group
+        // Initialize all groups as collapsed by default
+        const expandedSsids = {};
+
+        // Function to render Router Uptime
+        function renderRouterUptime() {
+            const uptimeContent = document.getElementById('router-uptime-content');
+            if (!uptimeContent) return; // Ensure element exists before rendering
+            uptimeContent.innerHTML = `
+                <p class="flex-between-center text-lg">
+                    <span class="font-medium text-gray-700">Router 1:</span>
+                    <span class="text-blue-600 font-bold">${apiData.router_1_uptime}</span>
+                </p>
+                <p class="flex-between-center text-lg">
+                    <span class="font-medium text-gray-700">Router 2:</span>
+                    <span class="text-blue-600 font-bold">${apiData.router_2_uptime}</span>
+                </p>
+                <p class="flex-between-center text-lg">
+                    <span class="font-medium text-gray-700">Total Connected Devices:</span>
+                    <span class="text-indigo-600 font-bold">${apiData.summary["Total All Connected"]}</span>
+                </p>
+            `;
+        }
+
+        // Function to render Clients Grouped by SSID
+        function renderGroupedClients() {
+            const clientsGroupedContent = document.getElementById('clients-grouped-content');
+            if (!clientsGroupedContent) return; // Ensure element exists before rendering
+            clientsGroupedContent.innerHTML = ''; // Clear previous content
+
+            // Get all SSIDs from the summary, including those with 0 clients
+            const allSsids = Object.keys(apiData.summary).filter(key => key !== "Total All Connected");
+
+            // Group clients by SSID (only clients that actually exist in apiData.clients)
+            const groupedClients = apiData.clients.reduce((acc, client) => {
+                const { ssid } = client;
+                if (!acc[ssid]) {
+                    acc[ssid] = [];
+                }
+                acc[ssid].push(client);
+                return acc;
+            }, {});
+
+            // Iterate over all possible SSIDs to create the sections
+            allSsids.forEach(ssid => {
+                // Get clients for the current SSID, or an empty array if none
+                const clients = groupedClients[ssid] || [];
+                const clientCount = apiData.summary[ssid] || 0; // Get count from summary
+
+                // Initialize expanded state for each SSID (default to false/collapsed)
+                if (expandedSsids[ssid] === undefined) {
+                    expandedSsids[ssid] = false;
+                }
+
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'ssid-group-container'; 
+
+                const headerButton = document.createElement('button');
+                headerButton.className = `ssid-header-button ${expandedSsids[ssid] ? 'expanded' : ''}`;
+                headerButton.innerHTML = `
+                    <span>
+                        ${ssid} (${clientCount} connected)
+                    </span>
+                    <svg
+                        class="w-6 h-6 transform transition-transform duration-200"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                `;
+                headerButton.onclick = () => toggleSsidExpansion(ssid);
+                groupDiv.appendChild(headerButton);
+
+                const clientsGrid = document.createElement('div');
+                clientsGrid.className = `client-cards-grid collapse-content ${expandedSsids[ssid] ? 'expanded' : ''}`;
+
+                if (clients.length > 0) {
+                    clients.forEach((client, index) => {
+                        const clientCard = document.createElement('div');
+                        clientCard.className = 'client-card';
+                        clientCard.innerHTML = `
+                            <h4 class="client-card-title">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-1.25-3M15 10V5a3 3 0 00-3-3H9a3 3 0 00-3 3v5m6 0h.01M12 10h-.01M12 10v4.01m-4.75-4.01h9.5"></path></svg>
+                                ${client.hostname}
+                            </h4>
+                            <div class="client-data-row">
+                                <span class="label">Upload:</span>
+                                <span class="value">${client.rx_data}</span>
+                            </div>
+                            <div class="client-data-row">
+                                <span class="label">Download:</span>
+                                <span class="value">${client.tx_data}</span>
+                            </div>
+                            <div class="client-card-footer">
+                                <p class="flex-between-center">
+                                    <span class="font-medium">Uptime:</span>
+                                    <span class="font-semibold">${client.uptime}</span>
+                                </p>
+                            </div>
+                        `;
+                        clientsGrid.appendChild(clientCard);
+                    });
+                } else {
+                    // Display message for no connected devices
+                    clientsGrid.innerHTML = `
+                        <div class="client-card" style="text-align: center; padding: 1.5rem; color: #666;">
+                            No devices connected to this Wi-Fi network.
+                        </div>
+                    `;
+                }
+                groupDiv.appendChild(clientsGrid);
+                clientsGroupedContent.appendChild(groupDiv);
+            });
+        }
+
+        // Function to toggle the expanded state of an SSID group and re-render
+        function toggleSsidExpansion(ssid) {
+            expandedSsids[ssid] = !expandedSsids[ssid];
+            renderGroupedClients(); // Re-render to apply new state
+        }
+
+        // Function to fetch data and render
+        async function fetchDataAndRender() {
+            const mainContent = document.querySelector('.main-content-fade-in');
+            mainContent.innerHTML = '<p style="text-align: center; margin-top: 2rem; font-size: 1.2rem; color: #555;">Loading network data...</p>';
+            mainContent.style.opacity = '0'; // Hide content while loading
+
+            try {
+                const response = await fetch('http://wifi.home/api/openwrt');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const rawApiData = await response.json();
+
+                // Transform raw data into the format expected by the dashboard
+                apiData = { // Assign to the global apiData
+                    clients: [],
+                    router_1_uptime: formatUptime(Number(rawApiData["router1 uptime"])),
+                    router_2_uptime: formatUptime(Number(rawApiData["router2 uptime"])),
+                    summary: {
+                        "Total All Connected": Number(rawApiData["total clients"]),
+                        "wifi_slow": Number(rawApiData["wifi_slow"]),
+                        "wifi_slow2": Number(rawApiData["wifi_slow2"]),
+                        "wifi_slow2_5g": Number(rawApiData["wifi_slow2_5g"]),
+                        "wifi_slow_5g": Number(rawApiData["wifi_slow_5g"])
+                    }
+                };
+
+                // Populate the clients array from the nested structure
+                for (const ssid in rawApiData.clients) {
+                    if (rawApiData.clients.hasOwnProperty(ssid)) {
+                        rawApiData.clients[ssid].forEach(client => {
+                            const [rxBytes, txBytes] = client["rx/tx"].split('/').map(Number);
+                            apiData.clients.push({
+                                hostname: client.hostname,
+                                rx_data: formatBytes(rxBytes),
+                                ssid: ssid,
+                                tx_data: formatBytes(txBytes),
+                                uptime: formatUptime(Number(client.uptime))
+                            });
+                        });
+                    }
+                }
+
+                // Clear loading message and render actual content structure
+                mainContent.innerHTML = `
+                    <div class="card-grid-container">
+                        <div class="card card-blue-border">
+                            <h2 class="card-title card-title-blue">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3m0 0l3-3m-3 3v4m6 4a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Router Uptime
+                            </h2>
+                            <div class="card-content-space-y" id="router-uptime-content"></div>
+                        </div>
+                    </div>
+                    <div class="clients-section">
+                        <div id="clients-grouped-content"></div>
+                    </div>
+                `;
+                mainContent.style.opacity = '1'; // Show content after rendering
+
+                renderRouterUptime();
+                renderGroupedClients();
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                mainContent.innerHTML = `<p style="text-align: center; margin-top: 2rem; font-size: 1.2rem; color: #d32f2f;">Error loading network data: ${error.message}. Please ensure the API is running and accessible at <code>http://wifi.home/api/openwrt</code>.</p>`;
+                mainContent.style.opacity = '1'; // Show error message
+            }
+        }
+
+        // Run rendering functions when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', fetchDataAndRender);
+    </script>
+</body>
+</html>
