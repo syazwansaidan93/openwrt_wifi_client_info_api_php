@@ -1,0 +1,463 @@
+/* Base styles */
+body {
+    font-family: sans-serif;
+    /* Refined radial background gradient for a softer look */
+    background: radial-gradient(circle at top left, #e0e7f0, #c0c7d0);
+    min-height: 100vh;
+    padding: 0.5rem; /* Reduced padding for compactness */
+    margin: 0; /* Ensure no default margin */
+    color: #222222; /* Dark text for contrast */
+}
+
+@media (min-width: 640px) { /* sm:p-6 */
+    body {
+        padding: 1rem; /* Reduced padding for compactness */
+    }
+}
+
+@media (min-width: 1024px) { /* lg:p-8 */
+    body {
+        padding: 1.5rem; /* Reduced padding for compactness */
+    }
+}
+
+/* Fade-in animation for main content */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.main-content-fade-in {
+    animation: fadeIn 0.7s ease-out forwards;
+    animation-delay: 0.1s;
+    opacity: 0;
+}
+
+/* Card container grid */
+.card-grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.6rem; /* Further reduced gap */
+    margin-bottom: 0.8rem; /* Further reduced margin */
+    max-width: 72rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (min-width: 768px) {
+    .card-grid-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Individual Card styles (for Router Uptime) */
+.card {
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 0.75rem;
+    /* Enhanced shadow for more depth and subtle inner border */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    padding: 0.6rem 0.9rem 0.9rem 0.9rem; /* Top padding reduced, others remain */
+    border: 1px solid rgba(255, 255, 255, 0.7); /* Softer border */
+    transition: box-shadow 0.15s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.7) inset; /* More pronounced shadow on hover */
+    transform: translateY(-1px);
+}
+
+.card-blue-border {
+    border-color: rgba(60, 100, 180, 0.6);
+}
+
+.card-title {
+    font-size: 1.1rem; /* Slightly reduced title font size */
+    font-weight: 600;
+    margin-bottom: 0.5rem; /* Reduced margin */
+    display: flex;
+    align-items: center;
+    color: #1a1a1a;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle text shadow */
+}
+
+.card-title svg {
+    width: 1.1rem; /* Adjusted icon size */
+    height: 1.1rem; /* Adjusted icon size */
+    margin-right: 0.3rem; /* Reduced margin */
+}
+
+.card-title-blue svg {
+    color: #3f51b5;
+}
+
+/* Specifically target paragraphs within router-uptime-content to remove vertical gap */
+#router-uptime-content p {
+    margin: 0; /* Remove all margins */
+    padding: 0; /* Remove all paddings */
+    line-height: 1.2; /* Adjust line height for tighter spacing */
+}
+
+.card-content-space-y > p {
+    /* This rule is now effectively overridden by #router-uptime-content p */
+    margin-bottom: 0.3rem; /* Further reduced space between paragraphs */
+}
+.card-content-space-y > p:last-child {
+    margin-bottom: 0;
+}
+
+.flex-between-center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.text-lg {
+    font-size: 0.9rem; /* Slightly reduced font size */
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.text-gray-700 {
+    color: #333333;
+}
+
+.text-blue-600 {
+    color: #3f51b5;
+}
+
+.text-indigo-600 {
+    color: #673ab7;
+}
+
+.text-gray-600 {
+    color: #444444;
+}
+
+/* Clients section */
+.clients-section {
+    max-width: 72rem;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 3rem;
+    padding-top: 0.8rem; /* Reduced padding */
+}
+
+/* SSID group container for spacing */
+.ssid-group-container {
+    margin-bottom: 1.2rem; /* Reduced margin */
+}
+.ssid-group-container:last-of-type {
+    margin-bottom: 0;
+}
+
+/* SSID group header button */
+.ssid-header-button {
+    width: 100%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.2rem; /* Slightly reduced font size */
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.6rem; /* Reduced margin */
+    padding: 0.5rem; /* Reduced padding */
+    background-color: rgba(255, 255, 255, 0.8); /* Slightly more opaque */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 0.5rem;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12); /* Enhanced shadow */
+    transition: background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, transform 0.1s ease-in-out; /* Added transform for press effect */
+    outline: none;
+    border: 1px solid rgba(255, 255, 255, 0.8); /* Softer border */
+    cursor: pointer;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle text shadow */
+}
+
+.ssid-header-button:hover {
+    background-color: rgba(255, 255, 255, 0.95); /* More opaque on hover */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
+}
+
+.ssid-header-button:active { /* Press effect */
+    transform: translateY(1px);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.ssid-header-button:focus {
+    box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.5);
+}
+
+.ssid-header-button span:first-child {
+    color: #2e7d32;
+}
+
+.ssid-header-button svg {
+    width: 1.2rem; /* Adjusted icon size */
+    height: 1.2rem; /* Adjusted icon size */
+    transform: rotate(-90deg);
+    transition: transform 0.2s ease-in-out;
+    color: #333333;
+}
+
+.ssid-header-button.expanded svg {
+    transform: rotate(0deg);
+}
+
+/* Collapse/Expand content */
+.collapse-content {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px); /* Initial state for slide-up */
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth transition for all properties */
+}
+
+.collapse-content.expanded {
+    max-height: 1000px; /* Large enough to accommodate content */
+    opacity: 1;
+    transform: translateY(0); /* Final state for slide-up */
+}
+
+/* Client cards grid */
+.client-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two cards per row for phone view and up */
+    gap: 0.6rem; /* Reduced gap from 0.8rem to 0.6rem */
+    margin-top: 0.6rem; /* Reduced margin */
+}
+
+/* Removed redundant media query for 640px as default is now 2 columns */
+/* @media (min-width: 640px) {
+    .client-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+} */
+
+@media (min-width: 1024px) {
+    .client-cards-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Individual client card */
+.client-card {
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 0.75rem;
+    /* Enhanced shadow for more depth and subtle inner border */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    padding: 0.6rem 0.6rem 0.6rem; /* Top padding now matches bottom padding */
+    border: 1px solid rgba(255, 255, 255, 0.7); /* Softer border */
+    transition: box-shadow 0.15s ease-in-out, transform 0.15s ease-in-out; /* Added transform for hover effect */
+    display: flex;
+    flex-direction: column;
+}
+
+.client-card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.7) inset; /* More pronounced shadow on hover */
+    transform: translateY(-2px) scale(1.015); /* Slight lift and scale */
+}
+
+.client-card-title {
+    font-size: 1.1rem; /* Slightly reduced font size */
+    font-weight: 600;
+    margin-top: 0; /* Explicitly removed top margin */
+    margin-bottom: 0.3rem; /* Reduced margin from 0.5rem to 0.3rem */
+    display: flex;
+    align-items: center;
+    color: #1a1a1a;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle text shadow */
+}
+
+.client-card-title svg {
+    width: 1rem; /* Adjusted icon size */
+    height: 1rem; /* Adjusted icon size */
+    margin-right: 0.3rem; /* Reduced margin */
+    color: #2e7d32;
+}
+
+.client-data-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem; /* Increased font size from 0.8rem to 0.9rem */
+    line-height: 1.3; /* Tighter line height */
+    color: #333333;
+    margin-bottom: 0; /* Ensuring no extra gap */
+    padding-top: 0; /* Ensuring no extra gap */
+}
+.client-data-row:last-of-type {
+    margin-bottom: 0;
+}
+.client-data-row .label {
+    font-weight: 500;
+}
+.client-data-row .value {
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+/* Mobile-specific adjustments for cards */
+@media (max-width: 767px) {
+    .card {
+        padding: 0.7rem; /* Even smaller padding for main card on mobile */
+    }
+    .card-title {
+        font-size: 1rem; /* Smaller client hostname font size on mobile */
+        margin-bottom: 0.4rem;
+    }
+    .card-title svg {
+        width: 1rem;
+        height: 1rem;
+        margin-right: 0.2rem;
+    }
+    .card-content-space-y > p {
+        margin-bottom: 0.25rem; /* Tighter spacing on mobile */
+    }
+    .text-lg {
+        font-size: 0.85rem; /* Smaller font size for content on mobile */
+    }
+    .text-md {
+        font-size: 0.7rem; /* Smaller font size for sub-content on mobile */
+    }
+
+    .ssid-header-button {
+        font-size: 1.05rem; /* Smaller font for SSID headers on mobile */
+        padding: 0.4rem;
+        margin-bottom: 0.5rem;
+    }
+    .ssid-header-button svg {
+        width: 1.05rem;
+        height: 1.05rem;
+    }
+
+    .client-card {
+        padding: 0.5rem 0.5rem 0.5rem; /* Top padding now matches bottom padding for mobile */
+    }
+    .client-card-title {
+        font-size: 1rem; /* Smaller client hostname font size on mobile */
+        margin-top: 0; /* Explicitly removed top margin for mobile */
+        margin-bottom: 0.3rem; /* Reduced margin for mobile */
+    }
+    .client-card-title svg {
+        width: 0.9rem;
+        height: 0.9rem;
+        margin-right: 0.2rem;
+    }
+    .client-data-row { /* Adjusted for unified data rows */
+        font-size: 0.8rem; /* Adjusted for mobile to be slightly smaller than desktop 0.9rem */
+    }
+}
+
+/* Refresh Button Styles */
+.refresh-container {
+    max-width: 72rem;
+    margin: 1.5rem auto 2rem auto; /* Centered with top/bottom margin */
+    text-align: center;
+}
+
+.refresh-button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.refresh-button:hover {
+    background-color: #45a049; /* Darker green */
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.refresh-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.refresh-button svg {
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+/* Message Container for Errors (smaller, localized) */
+.error-message-container {
+    max-width: 72rem;
+    margin: 1rem auto;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    font-weight: 500;
+    font-size: 1rem;
+    background-color: rgba(255, 99, 71, 0.8); /* Tomato color */
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: none; /* Hidden by default */
+}
+
+/* Full-screen Loading Overlay Styles */
+.full-screen-loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.15); /* Changed to 15% opacity */
+    /* backdrop-filter is removed as it has no effect with transparent background */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Ensure it's on top of other content */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.full-screen-loader-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: #3f51b5; /* Blue text for loading */
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.spinner {
+    border: 5px solid rgba(63, 81, 181, 0.2); /* Lighter blue border */
+    border-top: 5px solid #3f51b5; /* Blue spinner */
+    border-radius: 50%;
+    width: 50px; /* Larger spinner */
+    height: 50px; /* Larger spinner */
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
