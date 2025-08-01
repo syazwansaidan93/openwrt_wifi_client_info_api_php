@@ -196,6 +196,7 @@ if (!function_exists('openwrtStatsEndpoint')) {
             $dhcpLeases = parseDhcp($dhcpData);
         }
 
+        $routerUptimes = [];
         foreach ($config["routers"] as $routerConf) {
             $routerId = $routerConf["id"] ?? null;
             if (!$routerId) continue;
@@ -206,11 +207,12 @@ if (!function_exists('openwrtStatsEndpoint')) {
             }
 
             if (empty($routerData)) {
+                $routerUptimes[$routerId] = 'N/A';
                 continue;
             }
 
             $rawUptimeSeconds = parseUptime($routerData);
-            $uptimes["{$routerId} uptime"] = (string)($rawUptimeSeconds ?? 'N/A');
+            $routerUptimes[$routerId] = (string)($rawUptimeSeconds ?? 'N/A');
 
             list($ssids, $clients) = parseSsidsClients($routerData);
 
@@ -231,7 +233,9 @@ if (!function_exists('openwrtStatsEndpoint')) {
             }
         }
 
-        $finalOutput = array_merge([], $uptimes);
+        $finalOutput = [
+            "router_uptimes" => $routerUptimes
+        ];
 
         $allSsids = array_unique(array_merge($identifiedSsids, array_keys($clientsBySsid)));
         sort($allSsids);
