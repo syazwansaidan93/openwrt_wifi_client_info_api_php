@@ -58,8 +58,7 @@ function hideErrorMessage() {
 function transformData(data) {
     const transformed = {
         clients: [],
-        router_1_uptime: formatUptime(Number(data["router1 uptime"])),
-        router_2_uptime: formatUptime(Number(data["router2 uptime"])),
+        router_uptimes: {},
         summary: {
             "Total All Connected": Number(data["total clients"]),
             "wifi_slow": Number(data["wifi_slow"]),
@@ -68,7 +67,14 @@ function transformData(data) {
             "wifi_slow_5g": Number(data["wifi_slow_5g"])
         }
     };
-
+    
+    // Dynamically populate router uptimes
+    for (const routerId in data.router_uptimes) {
+        if (data.router_uptimes.hasOwnProperty(routerId)) {
+            transformed.router_uptimes[routerId] = formatUptime(Number(data.router_uptimes[routerId]));
+        }
+    }
+    
     for (const ssid in data.clients) {
         if (data.clients.hasOwnProperty(ssid)) {
             data.clients[ssid].forEach(client => {
@@ -89,20 +95,31 @@ function transformData(data) {
 // Function to render Router Uptime
 function renderRouterUptime() {
     if (!uptimeContent) return;
-    uptimeContent.innerHTML = `
-        <p class="flex-between-center text-lg">
-            <span class="font-medium text-gray-700">Router 1:</span>
-            <span class="text-blue-600 font-bold">${apiData.router_1_uptime}</span>
-        </p>
-        <p class="flex-between-center text-lg">
-            <span class="font-medium text-gray-700">Router 2:</span>
-            <span class="text-blue-600 font-bold">${apiData.router_2_uptime}</span>
-        </p>
-        <p class="flex-between-center text-lg">
-            <span class="font-bold text-gray-700">Total Connected Devices:</span>
-            <span class="text-indigo-600 font-bold">${apiData.summary["Total All Connected"]} devices</span>
-        </p>
+    uptimeContent.innerHTML = ''; // Clear previous content
+
+    for (const routerId in apiData.router_uptimes) {
+        if (apiData.router_uptimes.hasOwnProperty(routerId)) {
+            // Check if the routerId has a hyphen. If so, use the part after it.
+            // If not, use the full routerId.
+            const displayName = routerId.includes('-') ? `Router ${routerId.split('-')[1]}` : routerId;
+
+            const uptimeParagraph = document.createElement('p');
+            uptimeParagraph.className = 'flex-between-center text-lg';
+            uptimeParagraph.innerHTML = `
+                <span class="font-medium text-gray-700">${displayName}:</span>
+                <span class="text-blue-600 font-bold">${apiData.router_uptimes[routerId]}</span>
+            `;
+            uptimeContent.appendChild(uptimeParagraph);
+        }
+    }
+
+    const totalClientsParagraph = document.createElement('p');
+    totalClientsParagraph.className = 'flex-between-center text-lg';
+    totalClientsParagraph.innerHTML = `
+        <span class="font-bold text-gray-700">Total Connected Devices:</span>
+        <span class="text-indigo-600 font-bold">${apiData.summary["Total All Connected"]} devices</span>
     `;
+    uptimeContent.appendChild(totalClientsParagraph);
 }
 
 // Function to render Clients Grouped by SSID
