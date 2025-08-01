@@ -146,19 +146,19 @@ if (!function_exists('openwrtStatsEndpoint')) {
         $client = new Client();
 
         $requests = [];
-        $routerDataMap = [];
         $dhcpData = null;
+        $dhcpUrl = null;
 
-        $router1DhcpUrl = null;
+        // Find the first router that has a dhcp_url specified and use it
         foreach ($config["routers"] as $routerConf) {
-            if (($routerConf["id"] ?? null) === "router1" && isset($routerConf["dhcp_url"])) {
-                $router1DhcpUrl = $routerConf["dhcp_url"];
+            if (isset($routerConf["dhcp_url"])) {
+                $dhcpUrl = $routerConf["dhcp_url"];
                 break;
             }
         }
 
-        if ($router1DhcpUrl) {
-            $requests['router1_dhcp'] = $client->getAsync($router1DhcpUrl, ['timeout' => 5])->then(
+        if ($dhcpUrl) {
+            $requests['dhcp'] = $client->getAsync($dhcpUrl, ['timeout' => 5])->then(
                 function ($response) {
                     return (string)$response->getBody();
                 },
@@ -188,8 +188,8 @@ if (!function_exists('openwrtStatsEndpoint')) {
 
         $results = Utils::settle($requests)->wait();
 
-        if (isset($results['router1_dhcp']) && $results['router1_dhcp']['state'] === 'fulfilled' && $results['router1_dhcp']['value'] !== null) {
-            $dhcpData = $results['router1_dhcp']['value'];
+        if (isset($results['dhcp']) && $results['dhcp']['state'] === 'fulfilled' && $results['dhcp']['value'] !== null) {
+            $dhcpData = $results['dhcp']['value'];
         }
 
         if ($dhcpData !== null) {
