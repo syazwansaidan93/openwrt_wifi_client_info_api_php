@@ -255,7 +255,7 @@ async function fetchNetworkData() {
     }
 
     try {
-        const response = await fetch('http://wifi.home/api/openwrt');
+        const response = await fetch('/api/openwrt');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
