@@ -1,0 +1,13 @@
+{
+    "routers": [
+        {
+            "id": "UniFi",
+            "info_url": "http://192.168.1.1/cgi-bin/info.cgi",
+            "dhcp_url": "http://192.168.1.1/cgi-bin/dhcp.cgi"
+        },
+        {
+            "id": "Wifi-AP",
+            "info_url": "http://192.168.1.2/cgi-bin/info.cgi"
+        }
+    ]
+}
